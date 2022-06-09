@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+/media/zuriki/Bunker/Estudos/WRkits/adc/build/CMakeFiles/bootloader
+/media/zuriki/Bunker/Estudos/WRkits/adc/build/CMakeFiles/bootloader.rule
+/media/zuriki/Bunker/Estudos/WRkits/adc/build/CMakeFiles/bootloader-complete.rule
+/media/zuriki/Bunker/Estudos/WRkits/adc/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+/media/zuriki/Bunker/Estudos/WRkits/adc/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+/media/zuriki/Bunker/Estudos/WRkits/adc/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+/media/zuriki/Bunker/Estudos/WRkits/adc/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+/media/zuriki/Bunker/Estudos/WRkits/adc/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+/media/zuriki/Bunker/Estudos/WRkits/adc/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+/media/zuriki/Bunker/Estudos/WRkits/adc/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
