@@ -7,5 +7,6 @@
     "task.h": "c",
     "ets_sys.h": "c",
     "esp_adc_cal.h": "c"
-  }
+  },
+  "idf.portWin": "COM3"
 }
