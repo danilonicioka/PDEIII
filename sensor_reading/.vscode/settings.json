@@ -12,7 +12,8 @@
     "idf.pythonBinPathWin": "C:\\Users\\pedro\\.espressif\\python_env\\idf4.4_py3.8_env\\Scripts\\python.exe",
     "idf.toolsPathWin": "C:\\Users\\pedro\\.espressif",
     "files.associations": {
-        "freertos.h": "c"
+        "freertos.h": "c",
+        "esp_adc_cal.h": "c"
     },
     "idf.flashType": "UART"
 }
