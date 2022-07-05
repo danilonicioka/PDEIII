@@ -11,8 +11,8 @@ void setup() {
   Serial.begin(115200);
   pinMode(MQ6,INPUT);
   // Settings for ADC
-  analogSetWidth(10);               // 11Bit resolution
-  analogSetAttenuation(ADC_11db);
+  analogSetWidth(10);               // 10Bit resolution
+//  analogSetAttenuation(ADC_11db);
   Serial.print(F("MQ6 is heating..."));
   delay(HEAT_TIME_MQ6);
   Serial.println(F("\tdone!\n"));

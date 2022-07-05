@@ -1,7 +1,7 @@
 // MQ6
 #define VCC     5
-#define MQ6    A0
-#define RL     20000
+#define MQ6    A3
+#define RL  20000
 #define CALIBRATION_SAMPLES               100.0 // Multisampling
 #define CALIBRATION_SAMPLE_INTERVAL       100   // Milisseconds
 #define HEAT_TIME_MQ6                   20000   // Milisseconds
