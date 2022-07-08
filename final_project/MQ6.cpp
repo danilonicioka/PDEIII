@@ -11,6 +11,7 @@
 #define ADJUST_HUM      -0.001923077
 #define LOW_RISK         2000
 #define MODERATE_RISK   19000
+#define RECALIBRATE 360
 
 #include "MQ6.h"
 #include "global.h"
@@ -72,26 +73,32 @@ double adjustRatio(double ratio, float temp, float hum){
   double dHum  = hum  - STD_HUM;
   double newRatio;
   newRatio = ratio + dTemp*ADJUST_TEMP + dHum*ADJUST_HUM;
-  Serial.println(F("=== Temperature ==="));
-  Serial.printf("Temp: %f\tdTemp: %lf\n\n",temp,dTemp);
-  Serial.println(F("=== Humidity ==="));
-  Serial.printf("Hum: %f\tdHum: %lf\n\n",hum,dHum);
-  Serial.println(F("=== Ratio ==="));
-  Serial.printf("Old ratio: %lf\tNew ratio: %lf\n\n",ratio,newRatio);
+//  Serial.println(F("=== Temperature ==="));
+//  Serial.printf("Temp: %f\tdTemp: %lf\n\n",temp,dTemp);
+//  Serial.println(F("=== Humidity ==="));
+//  Serial.printf("Hum: %f\tdHum: %lf\n\n",hum,dHum);
+//  Serial.println(F("=== Ratio ==="));
+//  Serial.printf("Old ratio: %lf\tNew ratio: %lf\n\n",ratio,newRatio);
   return newRatio;
 }
 
-double getPPM(double ratio, double newRatio){
+double getPPM(double ratio){
   double expoent = 1.0/log10(0.4);
   double ppm = 1000*pow(ratio, expoent);
-  double newppm = 1000*pow(newRatio, expoent);
-  Serial.println(F("=== Concentration ==="));
-  Serial.printf("Expoent: %lf\tPPM: %lf\tNew PPM: %lf\n\n",expoent,ppm,newppm);
-  return newppm;
+//  double newppm = 1000*pow(newRatio, expoent);
+//  Serial.println(F("=== Concentration ==="));
+//  Serial.printf("Expoent: %lf\tPPM: %lf\tNew PPM: %lf\n\n",expoent,ppm,newppm);
+  return ppm;
 }
 
 int checkRisk(double ppm){
-  if (ppm < LOW_RISK)           return NONE;
+  if (ppm < LOW_RISK)           return SAFE;
   else if (ppm < MODERATE_RISK) return INTOXICATION;
   else                          return EXPLOSION;
+}
+
+int recalibrate(long totalMeasurements){
+  if(totalMeasurements % RECALIBRATE == 0)
+    return 1;
+  return 0;
 }

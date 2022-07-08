@@ -1,13 +1,31 @@
 #define MQ6    35
+#define HEAT    0
 #define DHTPIN 15
-#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
-#define HEAT 0
+#define DHTTYPE DHT22
+#define LIFE_SIGNAL_LIMIT 5
+#define uS_TO_S_FACTOR 1000000ULL  // Conversion factor for micro seconds to seconds
+#define TIME_TO_SLEEP  5        // Time ESP32 will go to sleep (in seconds)
 
 #include "MQ6.h"
 #include <DHT.h>
 #include "global.h"
 
+enum State {
+  CALIBRATE,
+  CHECK_RISK,
+  NOTIFY,
+  STANDBY
+};
+
+State state = CALIBRATE;  // Initial state
+
 DHT dht(DHTPIN, DHTTYPE);
+
+// Sleep configuration
+void lightSleep() {
+    esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+    esp_light_sleep_start();
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -28,15 +46,75 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  static uint8_t i = 0;
-  while(i<10){
-    float raw = rawADC(MQ6);
-    float volt = getVoltage(raw);
-    float Rs  = getRs(volt);  
-    double ratio = getRatio(Rs);
-    double newRatio = adjustRatio(ratio, dht.readTemperature(), dht.readHumidity());
-    double ppm = getPPM(ratio, newRatio);
-    printSamples(i, raw, volt, Rs, newRatio, ppm);
-    i++;
+
+  static double ppm;
+  static int lastRisk = NO_INFO;
+  static int newRisk = NO_INFO;
+  static long totalMeasurements = 0;
+  static int lifeSignal = 0;
+  
+  switch(state){
+    case CALIBRATE:{
+      Serial.println(F("=== ENTERED STATE CALIBRATE ==="));
+      float raw = rawADC(MQ6);
+      float volt = getVoltage(raw);
+      float Rs  = getRs(volt);  
+      double ratio = getRatio(Rs);
+      ratio = adjustRatio(ratio, dht.readTemperature(), dht.readHumidity());
+      ppm = getPPM(ratio);
+      printSamples(0, raw, volt, Rs, ratio, ppm);
+      state = CHECK_RISK;
+      break;
+    }
+    
+    case CHECK_RISK:{
+      Serial.println(F("=== ENTERED STATE CHECK_RISK ==="));
+      newRisk = checkRisk(ppm);
+      
+      // If risk has changed, goes to state NOTIFY
+      // else, goes to state STANDBY
+      if(newRisk != lastRisk){
+        lifeSignal = 0;
+        state = NOTIFY;
+      }
+      else{
+        lifeSignal++;
+        if(lifeSignal == LIFE_SIGNAL_LIMIT){
+          lifeSignal = 0;
+          state = NOTIFY;
+        } else state = STANDBY;
+      }
+      
+      lastRisk = newRisk; // Updates lastRisk value
+      break;
+    }
+    
+    case NOTIFY:{
+      Serial.println(F("=== ENTERED STATE NOTIFY ==="));
+      if(newRisk == SAFE){
+        Serial.println(F("Entrou em SAFE"));
+      }
+      else if(newRisk == INTOXICATION){
+        Serial.println(F("Entrou em INTOXICATION"));
+      }
+      else{
+        Serial.println(F("Entrou em EXPLOSION"));
+      }
+
+      state = STANDBY;
+      break;
+    }
+    
+    case STANDBY:{
+      Serial.println(F("=== ENTERED STATE STANDBY ==="));
+      totalMeasurements++;
+      Serial.println(F("Going to sleep now"));
+      delay(1000);
+      lightSleep();
+      Serial.println(F("Woke up now"));
+      if(recalibrate(totalMeasurements)) state = CALIBRATE;
+      else                               state = CHECK_RISK;
+      break;
+    }
   }
 }

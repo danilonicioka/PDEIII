@@ -13,11 +13,13 @@ void  printSamples(int cont, float raw, float volt, float Rs, double ratio, doub
 
 double getRatio(float Rs);         // Retorna ratio Rs/Ro
 double adjustRatio(double ratio, float temp, float hum);  // Retorna ratio ajustado de acordo com temp. e hum.
-double getPPM(double ratio, double newRatio);                // Retorna ppm
+double getPPM(double ratio);                // Retorna ppm
 
 int checkRisk(double ppm);      // Retorna nível de risco
-                                // N: sem risco
-                                // I: risco de intoxicação
-                                // E: risco de explosão
+                                // SAFE: sem risco
+                                // INTOXICATION: risco de intoxicação
+                                // EXPLOSION: risco de explosão
+                                
+int recalibrate(long totalMeasurements); // If it's time to recalibrate, returns 1
 
 #endif
