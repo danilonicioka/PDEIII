@@ -3,7 +3,6 @@
 #define RL  20000
 #define CALIBRATION_SAMPLES                50   // Multisampling
 #define CALIBRATION_SAMPLE_INTERVAL        50   // Milisseconds
-#define HEAT_TIME_MQ6                   20000   // Milisseconds
 #define Rs_Ro_clean_air 10.0
 #define STD_TEMP        20.0
 #define STD_HUM         65.0
@@ -30,12 +29,14 @@ float rawADC(int mq_pin){
       sum += analogRead(mq_pin);
       delay(CALIBRATION_SAMPLE_INTERVAL);
   }
-  return 2*(float)sum/CALIBRATION_SAMPLES;  // Multiplica por 2 para compensar o
-                                            // divisor de tensão do circuito
+  return (float)sum/CALIBRATION_SAMPLES;  
 }
 
 float getVoltage(float raw){
-  return 5*raw/1023.0;
+  float volt = 2*5*raw/1023.0;  // Multiplica por 2 para compensar o
+                                // divisor de tensão do circuito
+  if (volt < 0.17) return 0.17;
+  else             return volt;
 }
 
 float getRs(float voltage){

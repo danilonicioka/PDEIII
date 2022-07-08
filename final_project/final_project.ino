@@ -50,19 +50,19 @@ void loop() {
   static double ppm;
   static int lastRisk = NO_INFO;
   static int newRisk = NO_INFO;
-  static long totalMeasurements = 0;
   static int lifeSignal = 0;
+  static int contador = 0;
   
   switch(state){
     case CALIBRATE:{
       Serial.println(F("=== ENTERED STATE CALIBRATE ==="));
       float raw = rawADC(MQ6);
       float volt = getVoltage(raw);
-      float Rs  = getRs(volt);  
+      float Rs  = getRs(volt);
       double ratio = getRatio(Rs);
       ratio = adjustRatio(ratio, dht.readTemperature(), dht.readHumidity());
       ppm = getPPM(ratio);
-      printSamples(0, raw, volt, Rs, ratio, ppm);
+      printSamples(contador, raw, volt, Rs, ratio, ppm);
       state = CHECK_RISK;
       break;
     }
@@ -107,13 +107,12 @@ void loop() {
     
     case STANDBY:{
       Serial.println(F("=== ENTERED STATE STANDBY ==="));
-      totalMeasurements++;
       Serial.println(F("Going to sleep now"));
       delay(1000);
       lightSleep();
       Serial.println(F("Woke up now"));
-      if(recalibrate(totalMeasurements)) state = CALIBRATE;
-      else                               state = CHECK_RISK;
+      contador++;
+      state = CALIBRATE;
       break;
     }
   }

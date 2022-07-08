@@ -1,5 +1,7 @@
 #ifndef MQ6_H
+
 #define MQ6_H
+#define HEAT_TIME_MQ6                   20000   // Milisseconds
 
 #include <Arduino.h>
 
