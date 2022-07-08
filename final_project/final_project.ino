@@ -5,6 +5,10 @@
 #define LIFE_SIGNAL_LIMIT 5
 #define uS_TO_S_FACTOR 1000000ULL  // Conversion factor for micro seconds to seconds
 #define TIME_TO_SLEEP  5        // Time ESP32 will go to sleep (in seconds)
+#define NORMAL            0
+#define SET_SAFE          1
+#define SET_INTOXICATION  2
+#define SET_EXPLOSION     3
 
 #include "MQ6.h"
 #include <DHT.h>
@@ -18,15 +22,8 @@ enum State {
   STANDBY
 };
 
-enum Modes {
-  NORMAL,
-  SET_SAFE,
-  SET_INTOXICATION,
-  SET_EXPLOSION
-};
-
 State state = CALIBRATE;  // Initial state
-Modes modes = NORMAL;     // Default mode
+int checkMode = NORMAL;     // Default mode
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -53,21 +50,29 @@ BLYNK_CONNECTED()
 // This function is called every time the Virtual Pin 1 state changes
 BLYNK_WRITE(V1)
 {
-  // Set incoming value from pin V0 to a variable
+  Serial.println(F("=== Pino V1 ==="));
+  // Set incoming value from pin V1 to a variable
   int value = param.asInt();
-
   switch(value){
-    case NO_INFO:{
-      modes = NORMAL;
+    case 0:{
+      checkMode = NORMAL;
+      Serial.println(F("Pino V1 = NORMAL"));
+      break;
     }
-    case SAFE:{
-      modes = SET_SAFE;
+    case 1:{
+      checkMode = SET_SAFE;
+      Serial.println(F("Pino V1 = SET_SAFE"));
+      break;
     }
-    case INTOXICATION:{
-      modes = SET_INTOXICATION;
+    case 2:{
+      checkMode = SET_INTOXICATION;
+      Serial.println(F("Pino V1 = SET_INTOXICATION"));
+      break;
     }
-    case EXPLOSION:{
-      modes = SET_EXPLOSION;
+    case 3:{
+      checkMode = SET_EXPLOSION;
+      Serial.println(F("Pino V1 = Entrou em SET_EXPLOSION"));
+      break;
     }
   }
 }
@@ -117,10 +122,10 @@ void loop() {
     case CHECK_RISK:{
       Serial.println(F("=== ENTERED STATE CHECK_RISK ==="));
       
-      if(modes == NORMAL)                 newRisk = checkRisk(ppm);
-      else if(modes == SET_SAFE)          newRisk = SAFE;
-      else if(modes == SET_INTOXICATION)  newRisk = INTOXICATION;
-      else                                newRisk = EXPLOSION;       //modes == SET_EXPLOSION
+      if     (checkMode == NORMAL)            newRisk = checkRisk(ppm);
+      else if(checkMode == SET_SAFE)          newRisk = SAFE;
+      else if(checkMode == SET_INTOXICATION)  newRisk = INTOXICATION;
+      else                                    newRisk = EXPLOSION;       //checkMode == SET_EXPLOSION
       
       
       
@@ -164,8 +169,8 @@ void loop() {
     case STANDBY:{
       Serial.println(F("=== ENTERED STATE STANDBY ==="));
       Serial.println(F("Going to sleep now"));
-      delay(1000);
-      lightSleep();
+      delay(5000);
+//      lightSleep();
       Serial.println(F("Woke up now"));
       contador++;
       state = CALIBRATE;
