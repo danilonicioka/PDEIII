@@ -13,7 +13,7 @@ float getRo(float Rs_clean_air);   // Retorna valor de referência Ro, desde que
                                     // receba como parâmetro o valor de Rs no ar limpo
 void  printSamples(int cont, float raw, float volt, float Rs, double ratio, double ppm);  // Imprime informações das amostras colhidas
 
-double getRatio(float Rs);         // Retorna ratio Rs/Ro
+double getRatio(float Rs, float Ro);         // Retorna ratio Rs/Ro
 double adjustRatio(double ratio, float temp, float hum);  // Retorna ratio ajustado de acordo com temp. e hum.
 double getPPM(double ratio);                // Retorna ppm
 

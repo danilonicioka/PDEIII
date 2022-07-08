@@ -1,5 +1,5 @@
 #define VCC     5
-#define RO  53416
+//#define RO  53416
 #define RL  20000
 #define CALIBRATION_SAMPLES                50   // Multisampling
 #define CALIBRATION_SAMPLE_INTERVAL        50   // Milisseconds
@@ -35,8 +35,9 @@ float rawADC(int mq_pin){
 float getVoltage(float raw){
   float volt = 2*5*raw/1023.0;  // Multiplica por 2 para compensar o
                                 // divisor de tensão do circuito
-  if (volt < 0.17) return 0.17;
-  else             return volt;
+  if (volt < 0.17)     return 0.17;
+  else if (volt > 0.5) return 0.5;
+  else                 return volt;
 }
 
 float getRs(float voltage){
@@ -59,14 +60,14 @@ void printSamples(int cont, float raw, float volt, float Rs, double ratio, doubl
   Serial.print(F("  Rs: "));
   Serial.print(Rs);
   Serial.print(F("  Ratio: "));
-  Serial.print(Rs/RO);
+  Serial.print(ratio);
   Serial.print(F("  Concentration: "));
   Serial.print(ppm);
   Serial.println(F("ppm")); 
 }
 
-double getRatio(float Rs){
-  return Rs/RO;
+double getRatio(float Rs, float Ro){
+  return Rs/Ro;
 }
 
 double adjustRatio(double ratio, float temp, float hum){
