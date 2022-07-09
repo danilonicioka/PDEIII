@@ -12,8 +12,10 @@
 #define MODERATE_RISK   19000
 #define RECALIBRATE 360
 
+
 #include "MQ6.h"
 #include "global.h"
+#include <Arduino.h>
 #include <math.h>
 
 void setupADC(void){

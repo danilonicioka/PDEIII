@@ -3,7 +3,7 @@
 #define MQ6_H
 #define HEAT_TIME_MQ6                   20000   // Milisseconds
 
-#include <Arduino.h>
+
 
 void  setupADC(void);           // Configura resolução (10 bits) e atenuação (11dB) do ADC
 float rawADC(int mq_pin);       // Retorna valor do ADC no intervalo [0,1023]
